@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Tabel untuk menyimpan informasi unik tentang setiap outlet
+model Outlet {
+  id          String @id @default(cuid()) // ID unik untuk setiap baris
+  outlet_code String @unique // Kode outlet dari file CSV, harus unik
+  name        String
+  address     String? // Tanda tanya (?) berarti opsional
+  city        String?
+  kecamatan    String? // Kecamatan
+  kelurahan String? // Kelurahan
+  outlet_class String?
+  
+  // Relasi: Satu Outlet bisa memiliki banyak data penjualan
+  sales Sale[]
+}
+
+// Tabel untuk menyimpan informasi unik tentang setiap produk
+model Product {
+  id              String @id @default(cuid())
+  product_code    String @unique
+  name            String
+  brand           String?
+  category        String?
+  principal       String?
+  
+  // Relasi: Satu Produk bisa muncul di banyak data penjualan
+  sales Sale[]
+}
+
+
+// Tabel utama untuk data transaksi (Format PANJANG)
+model Sale {
+  id              String @id @default(cuid())
+  year            Int
+  month           Int
+  gross_value     Float
+  net_value       Float
+  disc_value      Float
+
+  // Foreign Keys (Kunci Asing) untuk relasi
+  outletId        String
+  productId       String
+
+  // Mendefinisikan relasi ke tabel lain
+  outlet          Outlet  @relation(fields: [outletId], references: [id])
+  product         Product @relation(fields: [productId], references: [id])
+
+  // Membuat index untuk mempercepat query berdasarkan tahun dan bulan
+  @@index([year, month])
+}
