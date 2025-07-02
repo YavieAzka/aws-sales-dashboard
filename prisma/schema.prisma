@@ -19,8 +19,8 @@ model Outlet {
   name        String
   address     String? // Tanda tanya (?) berarti opsional
   city        String?
-  kecamatan    String? // Kecamatan
-  kelurahan String? // Kelurahan
+  kecamatan   String? // Kecamatan
+  kelurahan   String? // Kelurahan
   outlet_class String?
   
   // Relasi: Satu Outlet bisa memiliki banyak data penjualan
