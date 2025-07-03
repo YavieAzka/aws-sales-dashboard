@@ -1,9 +1,9 @@
 // src/pages/index.tsx
 "use client";
 import useSWR from "swr";
-import KPICard from "@/components/KPICard"; // @/ adalah alias untuk folder src/
+import KPICard from "@/components/KPICard";
+import TopPrincipalsChart from "@/components/TopPrincipalsChart";
 
-// Definisikan tipe data yang kita harapkan dari API
 interface KpiData {
   total_net_sales: number;
   total_outlets: number;
@@ -23,7 +23,6 @@ export default function HomePage() {
   return (
     <main className="bg-[#0C0C0C] min-h-screen p-8">
       <h1 className="text-4xl font-bold text-white mb-8">Sales Dashboard</h1>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <KPICard
           title="Total Penjualan (NET)"
@@ -40,6 +39,10 @@ export default function HomePage() {
           value={data?.total_products || 0}
           isLoading={isLoading}
         />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 mt-12">
+        <TopPrincipalsChart /> {/* <-- 2. Tambahkan komponen di sini */}
       </div>
     </main>
   );
