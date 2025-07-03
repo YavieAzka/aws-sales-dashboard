@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import KPICard from "@/components/KPICard";
 import TopPrincipalsChart from "@/components/TopPrincipalsChart";
+import SalesTrendChart from "@/components/SalesTrendChart";
 
 interface KpiData {
   total_net_sales: number;
@@ -42,7 +43,8 @@ export default function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 mt-12">
-        <TopPrincipalsChart /> {/* <-- 2. Tambahkan komponen di sini */}
+        <TopPrincipalsChart />
+        <SalesTrendChart />
       </div>
     </main>
   );

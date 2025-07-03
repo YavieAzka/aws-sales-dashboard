@@ -28,7 +28,7 @@ async function main() {
   await prisma.product.createMany({ data: productArray, skipDuplicates: true });
 
   // --- FASE 3: MAPPING & BATCH INSERT SALES ---
-  console.log("Step 3: Preparing sales data with foreign keys...");
+  console.log("Preparing sales data with foreign keys...");
 
   // Ambil kembali semua outlet dan produk yang sudah ada di DB untuk mendapatkan ID mereka
   const allOutlets = await prisma.outlet.findMany({
@@ -69,7 +69,7 @@ async function main() {
 
   const chunkSize = 10000; // Kita akan memasukkan data per 10.000 baris
   console.log(
-    `Step 4: Inserting ${salesToCreate.length} sale records in chunks of ${chunkSize}...`
+    `Inserting ${salesToCreate.length} sale records in chunks of ${chunkSize}...`
   );
 
   for (let i = 0; i < salesToCreate.length; i += chunkSize) {
@@ -80,7 +80,7 @@ async function main() {
     });
 
     console.log(
-      `-> Inserted chunk ${i / chunkSize + 1} of ${Math.ceil(
+      `$ Inserted chunk ${i / chunkSize + 1} of ${Math.ceil(
         salesToCreate.length / chunkSize
       )}`
     );
@@ -99,7 +99,7 @@ function processCsv() {
     const scriptDir = path.dirname(__filename);
     const csvFilePath = path.join(
       scriptDir,
-      "../data/data-miniature_with_no.csv"
+      "../data/data-miniature3_with_no.csv"
     ); // Pastikan ini nama file 100rb baris Anda
     const fileStream = fs.createReadStream(csvFilePath, "utf-8");
 
@@ -164,4 +164,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-// node -r @swc-node/register ingest.js
+// node -r @swc-node/register scripts/ingest.js

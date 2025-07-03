@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Baca file CSV
-input_file = 'data-miniature.csv'
-output_file = 'data-miniature_with_no.csv'
+input_file = 'D:\Project\\aws-sales-dashboard\\aws-sales-dashboard-project\data\data-miniature3.csv'
+output_file = 'data-miniature3_with_no.csv'
 
 # Baca file tanpa header agar bisa menambahkan kolom "No"
 df = pd.read_csv(input_file)

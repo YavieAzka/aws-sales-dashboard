@@ -26,7 +26,7 @@ export default function TopPrincipalsChart() {
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-white">
-      <h3 className="font-bold mb-4">Top 5 Principals by Net Sales</h3>
+      <h3 className="font-bold mb-4 text-3xl">Top 5 Principals by Net Sales</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
@@ -37,16 +37,14 @@ export default function TopPrincipalsChart() {
           <YAxis
             stroke="#9ca3af"
             fontSize={12}
-            tickFormatter={(value) =>
-              new Intl.NumberFormat("id-ID", { notation: "compact" }).format(
-                value
-              )
+            tickFormatter={(value: number) =>
+              `${new Intl.NumberFormat("id-ID").format(value)} Jt`
             }
           />
           <Tooltip
             contentStyle={{ backgroundColor: "#1f2937", border: "none" }}
             formatter={(value: number) =>
-              new Intl.NumberFormat("id-ID").format(value)
+              `${new Intl.NumberFormat("id-ID").format(value)} Jt`
             }
           />
           <Legend />

@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // LANGKAH 1: Dapatkan total penjualan untuk SEMUA produk
+    // Total penjualan semua produk
     const salesByProduct = await prisma.sale.groupBy({
       by: ["productId"],
       _sum: {
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       },
     });
 
-    // LANGKAH 2: Dapatkan semua produk untuk membuat pemetaan productId -> principal
+    // Dapatkan semua produk untuk membuat pemetaan productId -> principal
     const allProducts = await prisma.product.findMany({
       select: {
         id: true,
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       allProducts.map((p) => [p.id, p.principal])
     );
 
-    // LANGKAH 3: Agregasi ulang di JavaScript berdasarkan prinsipal
+    // Agregasi ulang di JavaScript berdasarkan prinsipal
     const salesByPrincipal = new Map();
 
     for (const sale of salesByProduct) {
