@@ -1,4 +1,4 @@
-// src/pages/api/kpi.js
+// src/pages/api/kpi.js (Versi Perbaikan)
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -9,15 +9,34 @@ export default async function handler(req, res) {
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
+  const { year } = req.query;
+  const targetYear = parseInt(year) || new Date().getFullYear();
+
   try {
     const totalNetSales = await prisma.sale.aggregate({
-      _sum: {
-        net_value: true,
+      where: { year: targetYear },
+      _sum: { net_value: true },
+    });
+
+    const totalOutlets = await prisma.outlet.count({
+      where: {
+        sales: {
+          some: {
+            year: targetYear,
+          },
+        },
       },
     });
 
-    const totalOutlets = await prisma.outlet.count();
-    const totalProducts = await prisma.product.count();
+    const totalProducts = await prisma.product.count({
+      where: {
+        sales: {
+          some: {
+            year: targetYear,
+          },
+        },
+      },
+    });
 
     const kpiData = {
       total_net_sales: totalNetSales._sum.net_value || 0,

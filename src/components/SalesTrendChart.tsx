@@ -15,8 +15,15 @@ import {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function SalesTrendChart() {
-  const { data, error, isLoading } = useSWR("/api/sales-trend", fetcher);
+interface ChartProps {
+  year: number;
+}
+
+export default function SalesTrendChart({ year }: ChartProps) {
+  const { data, error, isLoading } = useSWR(
+    `/api/sales-trend?year=${year}`,
+    fetcher
+  );
 
   if (error) return <div>Failed to load chart</div>;
   if (isLoading)
@@ -26,7 +33,7 @@ export default function SalesTrendChart() {
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-white">
-      <h3 className="font-bold mb-4 text-3xl">Tren Penjualan Bulanan (NET)</h3>
+      <h3 className="font-bold mb-4">Sales Trend (NET) - {year}</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
           data={data}

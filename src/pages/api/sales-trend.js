@@ -4,8 +4,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
+  const { year } = req.query;
+  const targetYear = parseInt(year) || new Date().getFullYear();
   try {
     const salesTrend = await prisma.sale.groupBy({
+      where: { year: targetYear },
       by: ["year", "month"],
       _sum: {
         net_value: true,

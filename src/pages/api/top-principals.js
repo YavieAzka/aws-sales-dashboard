@@ -4,13 +4,22 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
+  const { year, month } = req.query;
+  const targetYear = parseInt(year) || new Date().getFullYear();
   if (req.method !== "GET") {
     return res.status(405).end();
   }
-
+  const whereClause = {
+    year: targetYear,
+  };
+  const targetMonth = parseInt(month);
+  if (!isNaN(targetMonth) && targetMonth >= 1 && targetMonth <= 12) {
+    whereClause.month = targetMonth;
+  }
   try {
     // Total penjualan semua produk
     const salesByProduct = await prisma.sale.groupBy({
+      where: whereClause,
       by: ["productId"],
       _sum: {
         net_value: true,
@@ -19,6 +28,13 @@ export default async function handler(req, res) {
 
     // Dapatkan semua produk untuk membuat pemetaan productId -> principal
     const allProducts = await prisma.product.findMany({
+      where: {
+        sales: {
+          some: {
+            year: targetYear,
+          },
+        },
+      },
       select: {
         id: true,
         principal: true,
