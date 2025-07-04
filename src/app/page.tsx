@@ -6,6 +6,7 @@ import TopPrincipalsChart from "@/components/TopPrincipalsChart";
 import SalesTrendChart from "@/components/SalesTrendChart";
 import FinisherBackground from "@/components/FinisherBackground";
 import { useState } from "react";
+import SalesByCityChart from "@/components/SalesByCityChart";
 import { useEffect } from "react";
 
 interface KpiData {
@@ -54,7 +55,7 @@ export default function HomePage() {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <KPICard
             title="Total Penjualan (NET)"
             value={data?.total_net_sales.toFixed(0) || 0}
@@ -72,9 +73,13 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TopPrincipalsChart year={selectedYear} />
-          <SalesTrendChart year={selectedYear} />
+          <SalesByCityChart year={selectedYear} />
+          {/* 2. Tambahkan komponen baru di sini. `col-span-2` membuatnya memakan lebar penuh */}
+          <div className="lg:col-span-2">
+            <SalesTrendChart year={selectedYear} />
+          </div>
         </div>
       </main>
     </div>

@@ -13,44 +13,49 @@ export default async function handler(req, res) {
       .json({ message: "Valid year parameter is required." });
   }
 
+  // Buat objek filter dasar untuk tahun
   const whereClause = { year: targetYear };
+
+  // Jika ada bulan yang valid, tambahkan ke filter
   const targetMonth = parseInt(month);
   if (!isNaN(targetMonth) && targetMonth >= 1 && targetMonth <= 12) {
     whereClause.month = targetMonth;
   }
 
   try {
-    // 1. Ambil semua penjualan yang sesuai filter, kelompokkan per outlet
-    const salesByOutlet = await prisma.sale.groupBy({
+    // LANGKAH 1: Ambil semua data penjualan yang sesuai filter.
+    // Sertakan juga nama kota dari outlet yang terhubung.
+    const salesData = await prisma.sale.findMany({
       where: whereClause,
-      by: ["outletId"],
-      _sum: { net_value: true },
+      select: {
+        net_value: true,
+        outlet: {
+          select: {
+            city: true,
+          },
+        },
+      },
     });
 
-    // 2. Buat "kamus" untuk memetakan outletId ke nama kota
-    const outletIds = salesByOutlet.map((s) => s.outletId);
-    const outlets = await prisma.outlet.findMany({
-      where: { id: { in: outletIds } },
-      select: { id: true, city: true },
-    });
-    const outletToCityMap = new Map(outlets.map((o) => [o.id, o.city]));
-
-    // 3. Agregasi ulang di JavaScript berdasarkan kota
+    // LANGKAH 2: Agregasi data di JavaScript
     const salesByCity = new Map();
-    for (const sale of salesByOutlet) {
-      const cityName = outletToCityMap.get(sale.outletId) || "Lainnya";
+    for (const sale of salesData) {
+      // Jika outlet atau kota tidak ada, beri nama "Lainnya"
+      const cityName = sale.outlet?.city || "Lainnya";
       const currentSales = salesByCity.get(cityName) || 0;
-      salesByCity.set(cityName, currentSales + (sale._sum.net_value || 0));
+      salesByCity.set(cityName, currentSales + sale.net_value);
     }
 
-    // 4. Format data untuk pie chart
+    // LANGKAH 3: Format data untuk pie chart
     const formattedData = Array.from(salesByCity.entries())
       .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value); // Urutkan dari terbesar
+      .sort((a, b) => b.value - a.value);
 
     res.status(200).json(formattedData);
   } catch (error) {
     console.error("Error fetching sales by city:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  } finally {
+    await prisma.$disconnect();
   }
 }
