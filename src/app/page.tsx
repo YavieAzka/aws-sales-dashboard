@@ -5,8 +5,9 @@ import KPICard from "@/components/KPICard";
 import TopPrincipalsChart from "@/components/TopPrincipalsChart";
 import SalesTrendChart from "@/components/SalesTrendChart";
 import FinisherBackground from "@/components/FinisherBackground";
-import { useState } from "react";
 import SalesByCityChart from "@/components/SalesByCityChart";
+import TopOutletsChart from "@/components/TopOutletsChart";
+import { useState } from "react";
 import { useEffect } from "react";
 
 interface KpiData {
@@ -80,6 +81,9 @@ export default function HomePage() {
           <div className="lg:col-span-2">
             <SalesTrendChart year={selectedYear} />
           </div>
+        </div>
+        <div className="mt-6">
+          <TopOutletsChart year={selectedYear} />
         </div>
       </main>
     </div>
